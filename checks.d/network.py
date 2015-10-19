@@ -256,7 +256,9 @@ class Network(AgentCheck):
                 'SndbufErrors': 'system.net.udp.snd_buf_errors'
             }
             for key, metric in udp_metrics_name.iteritems():
-                self.rate(metric, self._parse_value(udp_metrics[key]))
+                # Not every metric is available in every OS, so look 'em first
+                if key in udp_metrics:
+                    self.rate(metric, self._parse_value(udp_metrics[key]))
 
         except IOError:
             # On Openshift, /proc/net/snmp is only readable by root
